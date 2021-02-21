@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block titulo_pagina %}Register{% endblock titulo_pagina %}
+
+{% block contenido_pagina %}
+
+    <h1>Register</h1>
+
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+    </form>
+
+
+{% endblock contenido_pagina %}
