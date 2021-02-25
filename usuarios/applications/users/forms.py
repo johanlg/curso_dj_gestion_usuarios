@@ -12,7 +12,7 @@ class UserRegisterForm(forms.ModelForm):
             attrs = {
                 'placeholder' : 'Ingrese contraseña'
             }
-        )
+        ),
     )
 
 
@@ -24,7 +24,7 @@ class UserRegisterForm(forms.ModelForm):
             attrs = {
                 'placeholder' : 'Repetir contraseña'
             }
-        )
+        ),
     )
 
 
@@ -37,3 +37,17 @@ class UserRegisterForm(forms.ModelForm):
             'apellidos' ,
             'genero'    ,
         )
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+
+        cantidad_minima_caracteres = 5
+
+        if password1 != password2:
+            self.add_error('password2', 'Las contraseñas no coinciden')
+
+        if len(password1) < cantidad_minima_caracteres:
+            self.add_error('password1', 'La contraseña debe tener minimo 5 caracteres')
+        
+
