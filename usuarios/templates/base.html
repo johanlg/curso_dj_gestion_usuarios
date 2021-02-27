@@ -3,40 +3,44 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-        <title>{% block titulo_pagina %}{% endblock titulo_pagina %}</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <title>{% block titulo_pagina %}{% endblock titulo_pagina %}</title>
 
-    </head>
+</head>
 
-    <header>
+<header>
 
-        {% block header_pagina %}
-            
-        {% endblock header_pagina %}
-            
-    </header>
+    {% include 'includes/navbar.html' %}
 
-    <body>
-        
-        {% block contenido_pagina %}
-            
-        {% endblock contenido_pagina %}
-            
-    </body>
+</header>
 
-    <footer>
-        
-        
-        {% block footer_pagina %}
-            
-        {% endblock footer_pagina %}
-            
+<body>
 
-        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+                {% block contenido_pagina %}
 
-    </footer>
+                {% endblock contenido_pagina %}
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<footer>
+
+
+    {% block footer_pagina %}
+
+    {% endblock footer_pagina %}
+
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+</footer>
 
 </html>

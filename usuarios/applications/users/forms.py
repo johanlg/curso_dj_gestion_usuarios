@@ -10,7 +10,8 @@ class UserRegisterForm(forms.ModelForm):
         required = True         ,
         widget   = forms.PasswordInput(
             attrs = {
-                'placeholder' : 'Ingrese contraseña'
+                'placeholder' : 'Ingrese contraseña',
+                'class'       : 'form-control'
             }
         ),
     )
@@ -22,7 +23,8 @@ class UserRegisterForm(forms.ModelForm):
         required = True         ,
         widget   = forms.PasswordInput(
             attrs = {
-                'placeholder' : 'Repetir contraseña'
+                'placeholder' : 'Repetir contraseña',
+                'class'       : 'form-control'
             }
         ),
     )
@@ -37,6 +39,14 @@ class UserRegisterForm(forms.ModelForm):
             'apellidos' ,
             'genero'    ,
         )
+
+        widgets = {
+            'username'  : forms.TextInput(attrs={'class': 'form-control'}),
+            'email'     : forms.TextInput(attrs={'class': 'form-control'}),
+            'nombres'   : forms.TextInput(attrs={'class': 'form-control'}),
+            'apellidos' : forms.TextInput(attrs={'class': 'form-control'}),
+            'genero'    : forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
