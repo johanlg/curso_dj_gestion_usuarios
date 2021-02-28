@@ -6,7 +6,7 @@ class UserRegisterForm(forms.ModelForm):
 
     password1 = forms.CharField(
         
-        label    = 'Contraseña' ,
+        label    = 'Contraseña1' ,
         required = True         ,
         widget   = forms.PasswordInput(
             attrs = {
@@ -19,7 +19,7 @@ class UserRegisterForm(forms.ModelForm):
 
     password2 = forms.CharField(
         
-        label    = 'Contraseña' ,
+        label    = 'Contraseña2' ,
         required = True         ,
         widget   = forms.PasswordInput(
             attrs = {
@@ -40,13 +40,15 @@ class UserRegisterForm(forms.ModelForm):
             'genero'    ,
         )
 
-        widgets = {
-            'username'  : forms.TextInput(attrs={'class': 'form-control'}),
-            'email'     : forms.TextInput(attrs={'class': 'form-control'}),
-            'nombres'   : forms.TextInput(attrs={'class': 'form-control'}),
-            'apellidos' : forms.TextInput(attrs={'class': 'form-control'}),
-            'genero'    : forms.TextInput(attrs={'class': 'form-control'}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserRegisterForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'placeholder' : 'Username' , 'class': 'form-control'})
+        self.fields['email'].widget.attrs.update({'placeholder'    : 'Email'    , 'class': 'form-control'})
+        self.fields['nombres'].widget.attrs.update({'placeholder'  : 'Nombres'  , 'class': 'form-control'})
+        self.fields['apellidos'].widget.attrs.update({'placeholder': 'Apellidos', 'class': 'form-control'})
+        self.fields['genero'].widget.attrs.update({'class': 'form-select'})
+        
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
@@ -55,7 +57,7 @@ class UserRegisterForm(forms.ModelForm):
         cantidad_minima_caracteres = 5
 
         if password1 != password2:
-            self.add_error('password2', 'Las contraseñas no coinciden')
+            self.add_error('password1', 'Las contraseñas no coinciden')
 
         if len(password1) < cantidad_minima_caracteres:
             self.add_error('password1', 'La contraseña debe tener minimo 5 caracteres')
