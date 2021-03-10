@@ -17,13 +17,14 @@
             {{ form.password }}
         </div>
 
-        {% if form.password.errors %}
+        {% if form.username.errors %}
         <div class="col-md-6">
             <div class="alert alert-danger" role="alert">
-                {{ form.password.errors}}
+                {{ form.username.errors}}
             </div>
         </div>
         {% endif %}
+
 
         <div class="col-12">
             <button type="submit" class="btn btn-primary btn-lg">Ingresar</button>

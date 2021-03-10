@@ -1,6 +1,6 @@
-from django import forms
-
-from .models import User
+from django              import forms
+from django.contrib.auth import authenticate
+from .models             import User
 
 class UserRegisterForm(forms.ModelForm):
 
@@ -86,3 +86,19 @@ class UserLoginForm(forms.Form):
         ),
     )
 
+
+    def clean(self):
+        cleaned_data = super(UserLoginForm, self).clean()
+
+        username_recibido = self.cleaned_data['username']
+        password_recibido = self.cleaned_data['password']
+
+        user = authenticate(
+            username = username_recibido,
+            password = password_recibido
+        )
+
+        if not user:
+            raise forms.ValidationError({'username':'Los datos de usuario no son correctos'})
+
+        return self.cleaned_data
