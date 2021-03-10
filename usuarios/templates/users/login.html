@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block titulo_pagina %}Login{% endblock titulo_pagina %}
+
+{% block contenido_pagina %}
+
+
+<div class="mx-auto p-4 bg-light border" style="width: 800px; margin-top: 50px;">
+
+    <form class="row g-4" method="post">
+        {% csrf_token %}
+        <div class="col-md-12">
+            {{ form.username }}
+        </div>
+
+        <div class="col-md-12">
+            {{ form.password }}
+        </div>
+
+        {% if form.password.errors %}
+        <div class="col-md-6">
+            <div class="alert alert-danger" role="alert">
+                {{ form.password.errors}}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-lg">Ingresar</button>
+        </div>
+    </form>
+
+</div>
+{% endblock contenido_pagina %}

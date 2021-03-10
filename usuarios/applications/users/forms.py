@@ -62,4 +62,27 @@ class UserRegisterForm(forms.ModelForm):
         if len(password1) < cantidad_minima_caracteres:
             self.add_error('password1', 'La contraseña debe tener minimo 5 caracteres')
         
+class UserLoginForm(forms.Form):
+
+    username = forms.CharField(
+        
+        required = True,
+        widget   = forms.TextInput(
+            attrs = {
+                'placeholder' : 'Username',
+                'class'       : 'form-control'
+            }
+        ),
+    )
+
+    password = forms.CharField(
+        
+        required = True         ,
+        widget   = forms.PasswordInput(
+            attrs = {
+                'placeholder' : 'Contraseña',
+                'class'       : 'form-control'
+            }
+        ),
+    )
 
