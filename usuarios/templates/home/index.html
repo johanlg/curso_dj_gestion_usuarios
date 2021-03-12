@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
 
+<!-- Titulo de la pagina -->
 {% block titulo_pagina %}Home{% endblock titulo_pagina %}
 
+<!-- Incluimos la navbar -->
+{% block header_pagina %}
 
+    {% include 'includes/navbar.html' %}
+
+{% endblock header_pagina %}
+
+
+<!-- Cuerpo de la pagina -->
 {% block contenido_pagina %}
 
 <h1>Panel de usuario</h1>
 
 <h3>Bienvenido : {{user}}</h3>
 
-<ul>
-    <li><a href="{% url 'users_app:userLogout' %}">Cerrar sesion</a></li>
-    <li><a href="#">Actualizar Datos</a></li>
-</ul>
 
 {% endblock contenido_pagina %}

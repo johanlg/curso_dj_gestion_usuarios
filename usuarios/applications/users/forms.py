@@ -59,7 +59,7 @@ class UserRegisterForm(forms.ModelForm):
         if password1 != password2:
             self.add_error('password1', 'Las contraseñas no coinciden')
 
-        if len(password1) < cantidad_minima_caracteres:
+        elif len(password1) < cantidad_minima_caracteres:
             self.add_error('password1', 'La contraseña debe tener minimo 5 caracteres')
         
 class UserLoginForm(forms.Form):
@@ -102,3 +102,60 @@ class UserLoginForm(forms.Form):
             raise forms.ValidationError({'username':'Los datos de usuario no son correctos'})
 
         return self.cleaned_data
+
+
+class UserUpdatePasswordForm(forms.Form):
+
+    password1 = forms.CharField(
+        
+        required = True         ,
+        widget   = forms.PasswordInput(
+            attrs = {
+                'placeholder' : 'Contraseña actual',
+                'class'       : 'form-control'
+            }
+        ),
+    )
+
+    password2 = forms.CharField(
+        
+        required = True         ,
+        widget   = forms.PasswordInput(
+            attrs = {
+                'placeholder' : 'Contraseña nueva',
+                'class'       : 'form-control'
+            }
+        ),
+    )
+
+    password3 = forms.CharField(
+        
+        required = True         ,
+        widget   = forms.PasswordInput(
+            attrs = {
+                'placeholder' : 'Confirma contraseña nueva',
+                'class'       : 'form-control'
+            }
+        ),
+    )
+
+
+    def clean(self):
+        cleaned_data = super(UserUpdatePasswordForm, self).clean()
+
+        password_actual = self.cleaned_data['password1']  # Recuperamos la contraseña actual que ingreso el usuario activo
+
+        password_nueva               = self.cleaned_data['password2']   # Recuperamos password nueva
+        password_nueva_confirmacion  = self.cleaned_data['password3']   # Recuperamos confirmacion password nueva
+
+        cantidad_minima_caracteres = 5
+
+        if password_nueva != password_nueva_confirmacion:
+            self.add_error('password3', 'Las contraseñas no coinciden')
+        elif len(password_nueva) < cantidad_minima_caracteres:
+            self.add_error('password3', 'La contraseña debe tener minimo 5 caracteres')
+
+
+        return self.cleaned_data
+
+    

@@ -1,7 +1,8 @@
-from django.shortcuts    import render
-from django.urls         import reverse_lazy, reverse
-from django.contrib.auth import authenticate, login, logout
-from django.http         import HttpResponseRedirect
+from django.shortcuts           import render
+from django.urls                import reverse_lazy, reverse
+from django.contrib.auth        import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http                import HttpResponseRedirect
 
 from django.views.generic import(
     View
@@ -13,7 +14,8 @@ from django.views.generic.edit import(
 
 from .forms import (
     UserRegisterForm,
-    UserLoginForm
+    UserLoginForm   ,
+    UserUpdatePasswordForm
 )
 
 from .models import User
@@ -23,7 +25,7 @@ from .models import User
 class UserRegisterView(FormView):
     template_name = 'users/register.html'
     form_class    = UserRegisterForm
-    success_url   = '.'
+    success_url   = 'users_app:userLogin'
 
     def form_valid(self, form):
 
@@ -74,4 +76,37 @@ class UserLogout(View):
         return HttpResponseRedirect(
             reverse('users_app:userLogin')
         )
+
+class UserUpdatePassword(LoginRequiredMixin,FormView):
+    template_name = 'users/user-update-password.html'
+    form_class    = UserUpdatePasswordForm
+    success_url   = reverse_lazy('users_app:userLogin')
+    login_url     = reverse_lazy('users_app:userLogin')
+
+    def form_valid(self, form):
+        
+        usuario_activo    = self.request.user               # Recuperamos el usuario que esta activo actualmente
+        password_actual   = form.cleaned_data['password1']  # Recuperamos la pass actual del usuario activo
+
+        # Intentamos autenticarnos con las credenciales actuales
+        user = authenticate(
+            username = usuario_activo.username,
+            password = password_actual
+        )
+
+        # Validamos si se pudo atenticar las credenciales
+        if user :
+            password_nueva = form.cleaned_data['password2'] # Recuperamos la nueva password
+            usuario_activo.set_password(password_nueva)     # Guardamos la nueva password
+            usuario_activo.save()                           # Guardamos cambios
+            logout(self.request)
+        
+            
+
+
+        return super(UserUpdatePassword, self).form_valid(form)
+
+
+
+
 
