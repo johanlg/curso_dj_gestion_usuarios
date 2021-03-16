@@ -12,13 +12,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('F', 'Femenino') ,
         ('O', 'Otros')
     )
+    
+    # Campos propios
+    username     = models.CharField(max_length=10, unique=True)
+    email        = models.EmailField()
+    nombres      = models.CharField(max_length=30, blank=True)
+    apellidos    = models.CharField(max_length=30, blank=True)
+    genero       = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
+    codeRegistro = models.CharField(max_length=6)
 
-    username  = models.CharField(max_length=10, unique=True)
-    email     = models.EmailField()
-    nombres   = models.CharField(max_length=30, blank=True)
-    apellidos = models.CharField(max_length=30, blank=True)
-    genero    = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
+    # Campos del AbstractBaseUser
     is_staff  = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
 

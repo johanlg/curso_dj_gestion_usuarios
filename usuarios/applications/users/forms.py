@@ -2,7 +2,8 @@ from django              import forms
 from django.contrib.auth import authenticate
 from .models             import User
 
-class UserRegisterForm(forms.ModelForm):
+
+class UserRegisterForm(forms.ModelForm):    #   Formulario para registrar usuarios  --------------------------------
 
     password1 = forms.CharField(
         
@@ -61,8 +62,41 @@ class UserRegisterForm(forms.ModelForm):
 
         elif len(password1) < cantidad_minima_caracteres:
             self.add_error('password1', 'La contraseña debe tener minimo 5 caracteres')
-        
-class UserLoginForm(forms.Form):
+
+
+class VerificationUserForm(forms.Form):     #   Formulario para validar registro usuarios  -------------------------
+    codeRegistro = forms.CharField(
+        required   = True ,
+        max_length = 6    ,
+        widget     = forms.TextInput(
+            attrs = {
+                'placeholder' : 'Ingrese codigo de verificacion',
+                'class'       : 'form-control'
+            }
+        ),
+    )
+
+    def __init__(self, pk, *args, **kwargs):
+        self.id_user = pk
+        super(VerificationUserForm, self).__init__(*args, **kwargs)
+    
+    
+    def clean_codeRegistro(self):
+        codigo = self.cleaned_data['codeRegistro']
+
+        if len(codigo) == 6:
+            activo = User.objects.code_validation(
+                self.id_user,
+                codigo
+            )
+
+            if not activo:
+                raise forms.ValidationError({'codeRegistro':'El codigo es incorrecto'})    
+        else:
+            raise forms.ValidationError({'codeRegistro':'El codigo es incorrecto'})
+
+
+class UserLoginForm(forms.Form):            #   Formulario para iniciar sesion usuarios  ---------------------------
 
     username = forms.CharField(
         
@@ -104,7 +138,7 @@ class UserLoginForm(forms.Form):
         return self.cleaned_data
 
 
-class UserUpdatePasswordForm(forms.Form):
+class UserUpdatePasswordForm(forms.Form):   #   Formulario para actualizar password usuarios  ----------------------
 
     password1 = forms.CharField(
         
@@ -158,4 +192,4 @@ class UserUpdatePasswordForm(forms.Form):
 
         return self.cleaned_data
 
-    
+

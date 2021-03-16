@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block titulo_pagina %}Verificacion{% endblock titulo_pagina %}
+
+{% block contenido_pagina %}
+
+
+<div class="mx-auto p-4 bg-light border" style="width: 1000px; margin-top: 50px;">
+
+    <form class="row g-2" method="post">
+        {% csrf_token %}
+
+        <div class="col-md-8">
+            {{ form.codeRegistro }}
+
+        </div>
+
+        <div class="d-grid gap-2 col-2 mx-auto">
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+
+    </form>
+
+</div>
+
+
+{% endblock contenido_pagina %}

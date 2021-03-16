@@ -1,6 +1,8 @@
+# Importaciones de Django   ########################################################
 from django.shortcuts           import render
-from django.urls                import reverse_lazy, reverse
-from django.contrib.auth        import authenticate, login, logout
+from django.core.mail           import send_mail
+from django.urls                import reverse_lazy ,reverse
+from django.contrib.auth        import authenticate ,login   ,logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http                import HttpResponseRedirect
 
@@ -12,22 +14,30 @@ from django.views.generic.edit import(
     FormView
 )
 
+
+# Importaciones propias     ########################################################
 from .forms import (
-    UserRegisterForm,
-    UserLoginForm   ,
-    UserUpdatePasswordForm
+    UserRegisterForm        ,
+    UserLoginForm           ,
+    UserUpdatePasswordForm  ,
+    VerificationUserForm
 )
 
 from .models import User
 
-# Create your views here.
+from .functions import generador_codigo_validacion_email_login
 
-class UserRegisterView(FormView):
+
+# Create your views here.   ########################################################
+
+class UserRegisterView(FormView):                       #   ---------------------------    Vista Registro de Usuario
     template_name = 'users/register.html'
     form_class    = UserRegisterForm
-    success_url   = 'users_app:userLogin'
 
     def form_valid(self, form):
+
+        # Generamos el codigo para validar el email del usuario registrado
+        codigo_validacion = generador_codigo_validacion_email_login()
 
         username  = form.cleaned_data['username'] 
         email     = form.cleaned_data['email']    
@@ -36,20 +46,55 @@ class UserRegisterView(FormView):
         apellidos = form.cleaned_data['apellidos']
         genero    = form.cleaned_data['genero']   
 
-        User.objects.create_user(
-            username                ,
-            email                   ,
-            password1               ,
-            nombres   = nombres     ,
-            apellidos = apellidos   ,
-            genero    = genero      ,
+        usuario = User.objects.create_user(
+            username                        ,
+            email                           ,
+            password1                       ,
+            nombres      = nombres          ,
+            apellidos    = apellidos        ,
+            genero       = genero           ,
+            codeRegistro = codigo_validacion,
 
         )
+        # Enviar el codigo al email del usuario nuevo
+        # 1) Datos de envio de email
+        asunto          = 'Confirmacion de email'
+        mensaje         = 'Codigo de verificacion: ' + codigo_validacion
+        email_remitente = 'johanlg2506@gmail.com'
+        
+        # 2) Envio email
+        send_mail(asunto, mensaje, email_remitente, [email,])
+        
+        # 3) Redirigir a pantalla de validacion        
+        return HttpResponseRedirect(
+            reverse(
+            'users_app:verificationUser',
+            kwargs={'pk':usuario.id}
+            )
+        )
 
-        return super(UserRegisterView, self).form_valid(form)
 
+class VerificationUserView(FormView):
+    template_name = 'users/verification-user.html'
+    form_class    = VerificationUserForm
+    success_url   = reverse_lazy('users_app:userLogin')
 
-class UserLogin(FormView):
+    def get_form_kwargs(self):
+        kwargs = super(VerificationUserView, self).get_form_kwargs()
+        kwargs.update({
+            'pk': self.kwargs['pk'],
+        })
+        return kwargs
+
+    def form_valid(self, form):
+        User.objects.filter(
+            id=self.kwargs['pk'],
+        ).update(
+            is_active=True
+        )
+        return super(VerificationUserView, self).form_valid(form)
+
+class UserLoginView(FormView):                              #   --------------------------    Vista Login de Usuario
     template_name = 'users/login.html'
     form_class    = UserLoginForm
     success_url   = reverse_lazy('home_app:homePage')
@@ -65,10 +110,10 @@ class UserLogin(FormView):
 
         login(self.request, user)
 
-        return super(UserLogin, self).form_valid(form)
+        return super(UserLoginView, self).form_valid(form)
 
 
-class UserLogout(View):
+class UserLogoutView(View):                                 #   -------------------------    Vista Logout de Usuario
 
     def get(self, request, *args, **kwargs):
         logout(request)
@@ -76,8 +121,9 @@ class UserLogout(View):
         return HttpResponseRedirect(
             reverse('users_app:userLogin')
         )
+        
 
-class UserUpdatePassword(LoginRequiredMixin,FormView):
+class UserUpdatePasswordView(LoginRequiredMixin,FormView):  #   --------------------    Vista Actualizacion Password
     template_name = 'users/user-update-password.html'
     form_class    = UserUpdatePasswordForm
     success_url   = reverse_lazy('users_app:userLogin')
@@ -102,9 +148,7 @@ class UserUpdatePassword(LoginRequiredMixin,FormView):
             logout(self.request)
         
             
-
-
-        return super(UserUpdatePassword, self).form_valid(form)
+        return super(UserUpdatePasswordView, self).form_valid(form)
 
 
 

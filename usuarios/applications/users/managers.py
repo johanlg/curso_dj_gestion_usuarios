@@ -24,3 +24,10 @@ class UserManager(BaseUserManager, models.Manager):
 
     def create_superuser(self, username, email, password=None, **extra_fields):
         return self._create_user(username, email, password, True, True, **extra_fields)
+
+    
+    def code_validation(self, id_user, code_registro):
+        if self.filter(id=id_user, codeRegistro=code_registro).exists():
+            return True
+        else:
+            return False
